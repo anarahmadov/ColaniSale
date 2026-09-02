@@ -1,0 +1,6 @@
+@ColaniSale.API_HostAddress = http://localhost:5057
+
+GET {{ColaniSale.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
