@@ -8,6 +8,8 @@ public class ApplicationUserConfiguration : IEntityTypeConfiguration<Application
 {
     public void Configure(EntityTypeBuilder<ApplicationUser> builder)
     {
+        builder.ToTable("Users");
+
         builder.Property(user => user.IsActive)
             .IsRequired()
             .HasDefaultValue(true);

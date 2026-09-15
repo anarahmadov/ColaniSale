@@ -13,7 +13,19 @@ namespace ColaniSale.Infrastructure.Persistence.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "AspNetRoles",
+                name: "Permissions",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Permissions", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Roles",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -23,11 +35,11 @@ namespace ColaniSale.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetRoles", x => x.Id);
+                    table.PrimaryKey("PK_Roles", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUsers",
+                name: "Users",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -49,19 +61,7 @@ namespace ColaniSale.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Permissions",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Permissions", x => x.Id);
+                    table.PrimaryKey("PK_Users", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -78,11 +78,35 @@ namespace ColaniSale.Infrastructure.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_AspNetRoleClaims", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
+                        name: "FK_AspNetRoleClaims_Roles_RoleId",
                         column: x => x.RoleId,
-                        principalTable: "AspNetRoles",
+                        principalTable: "Roles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RolePermissions",
+                columns: table => new
+                {
+                    RoleId = table.Column<Guid>(type: "uuid", nullable: false),
+                    PermissionId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RolePermissions", x => new { x.RoleId, x.PermissionId });
+                    table.ForeignKey(
+                        name: "FK_RolePermissions_Permissions_PermissionId",
+                        column: x => x.PermissionId,
+                        principalTable: "Permissions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_RolePermissions_Roles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "Roles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -99,9 +123,9 @@ namespace ColaniSale.Infrastructure.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_AspNetUserClaims", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AspNetUserClaims_AspNetUsers_UserId",
+                        name: "FK_AspNetUserClaims_Users_UserId",
                         column: x => x.UserId,
-                        principalTable: "AspNetUsers",
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -119,15 +143,15 @@ namespace ColaniSale.Infrastructure.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_AspNetUserLogins", x => new { x.LoginProvider, x.ProviderKey });
                     table.ForeignKey(
-                        name: "FK_AspNetUserLogins_AspNetUsers_UserId",
+                        name: "FK_AspNetUserLogins_Users_UserId",
                         column: x => x.UserId,
-                        principalTable: "AspNetUsers",
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUserRoles",
+                name: "UserRoles",
                 columns: table => new
                 {
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -135,17 +159,17 @@ namespace ColaniSale.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetUserRoles", x => new { x.UserId, x.RoleId });
+                    table.PrimaryKey("PK_UserRoles", x => new { x.UserId, x.RoleId });
                     table.ForeignKey(
-                        name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
+                        name: "FK_UserRoles_Roles_RoleId",
                         column: x => x.RoleId,
-                        principalTable: "AspNetRoles",
+                        principalTable: "Roles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_AspNetUserRoles_AspNetUsers_UserId",
+                        name: "FK_UserRoles_Users_UserId",
                         column: x => x.UserId,
-                        principalTable: "AspNetUsers",
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -163,47 +187,17 @@ namespace ColaniSale.Infrastructure.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_AspNetUserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
                     table.ForeignKey(
-                        name: "FK_AspNetUserTokens_AspNetUsers_UserId",
+                        name: "FK_AspNetUserTokens_Users_UserId",
                         column: x => x.UserId,
-                        principalTable: "AspNetUsers",
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "RolePermissions",
-                columns: table => new
-                {
-                    RoleId = table.Column<Guid>(type: "uuid", nullable: false),
-                    PermissionId = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RolePermissions", x => new { x.RoleId, x.PermissionId });
-                    table.ForeignKey(
-                        name: "FK_RolePermissions_AspNetRoles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "AspNetRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_RolePermissions_Permissions_PermissionId",
-                        column: x => x.PermissionId,
-                        principalTable: "Permissions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
                 column: "RoleId");
-
-            migrationBuilder.CreateIndex(
-                name: "RoleNameIndex",
-                table: "AspNetRoles",
-                column: "NormalizedName",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserClaims_UserId",
@@ -216,20 +210,9 @@ namespace ColaniSale.Infrastructure.Persistence.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUserRoles_RoleId",
-                table: "AspNetUserRoles",
+                name: "IX_UserRoles_RoleId",
+                table: "UserRoles",
                 column: "RoleId");
-
-            migrationBuilder.CreateIndex(
-                name: "EmailIndex",
-                table: "AspNetUsers",
-                column: "NormalizedEmail");
-
-            migrationBuilder.CreateIndex(
-                name: "UserNameIndex",
-                table: "AspNetUsers",
-                column: "NormalizedUserName",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Permissions_Name",
@@ -241,6 +224,23 @@ namespace ColaniSale.Infrastructure.Persistence.Migrations
                 name: "IX_RolePermissions_PermissionId",
                 table: "RolePermissions",
                 column: "PermissionId");
+
+            migrationBuilder.CreateIndex(
+                name: "RoleNameIndex",
+                table: "Roles",
+                column: "NormalizedName",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "EmailIndex",
+                table: "Users",
+                column: "NormalizedEmail");
+
+            migrationBuilder.CreateIndex(
+                name: "UserNameIndex",
+                table: "Users",
+                column: "NormalizedUserName",
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -256,7 +256,7 @@ namespace ColaniSale.Infrastructure.Persistence.Migrations
                 name: "AspNetUserLogins");
 
             migrationBuilder.DropTable(
-                name: "AspNetUserRoles");
+                name: "UserRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
@@ -265,13 +265,13 @@ namespace ColaniSale.Infrastructure.Persistence.Migrations
                 name: "RolePermissions");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
-                name: "AspNetRoles");
+                name: "Users");
 
             migrationBuilder.DropTable(
                 name: "Permissions");
+
+            migrationBuilder.DropTable(
+                name: "Roles");
         }
     }
 }

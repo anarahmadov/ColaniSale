@@ -314,7 +314,7 @@ namespace ColaniSale.Infrastructure.Persistence.Migrations
                         .IsUnique()
                         .HasDatabaseName("RoleNameIndex");
 
-                    b.ToTable("AspNetRoles", (string)null);
+                    b.ToTable("Roles", (string)null);
                 });
 
             modelBuilder.Entity("ColaniSale.Infrastructure.Identity.ApplicationUser", b =>
@@ -384,7 +384,7 @@ namespace ColaniSale.Infrastructure.Persistence.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
 
-                    b.ToTable("AspNetUsers", (string)null);
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -468,7 +468,7 @@ namespace ColaniSale.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetUserRoles", (string)null);
+                    b.ToTable("UserRoles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
