@@ -1,5 +1,7 @@
 <Solution>
   <Project Path="ColaniSale.API/ColaniSale.API.csproj" />
+  <Project Path="ColaniSale.Application/ColaniSale.Application.csproj" />
   <Project Path="ColaniSale.Domain/ColaniSale.Domain.csproj" />
   <Project Path="ColaniSale.Infrastructure/ColaniSale.Infrastructure.csproj" />
+  <Project Path="ColaniSale.Tests/ColaniSale.Tests.csproj" />
 </Solution>
